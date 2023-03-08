@@ -3,5 +3,6 @@ RDP client by Golang
 
 ```diff
 + Bitmap [done]
-- Mouse&Keybord [not yet]
+- Mouse
+- Keybord [not yet]
 ```
