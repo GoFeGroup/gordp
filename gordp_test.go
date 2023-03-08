@@ -2,11 +2,11 @@ package gordp
 
 import (
 	"fmt"
-	"github.com/GoFeGroup/gordp/core"
-	"github.com/GoFeGroup/gordp/proto/bitmap"
-	"image/png"
 	"os"
 	"testing"
+
+	"github.com/GoFeGroup/gordp/core"
+	"github.com/GoFeGroup/gordp/proto/bitmap"
 )
 
 type processor struct {
@@ -16,10 +16,7 @@ type processor struct {
 func (p *processor) ProcessBitmap(option *bitmap.Option, bitmap *bitmap.BitMap) {
 	p.i++
 	_ = os.MkdirAll("./png", 0755)
-	file, err := os.Create(fmt.Sprintf("./png/%v.png", p.i))
-	core.ThrowError(err)
-	core.ThrowError(png.Encode(file, bitmap.Image))
-	core.ThrowError(file.Close())
+	_ = os.WriteFile(fmt.Sprintf("./png/%v.png", p.i), bitmap.ToPng(), 0644)
 }
 
 func TestRdpConnect(t *testing.T) {
