@@ -1,11 +1,12 @@
 package gordp
 
 import (
+	"time"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/glog"
 	"github.com/GoFeGroup/gordp/proto/bitmap"
 	"github.com/GoFeGroup/gordp/proto/t128"
-	"time"
 )
 
 type Option struct {
@@ -85,8 +86,14 @@ func (c *Client) Run(processor Processor) error {
 				switch pp := p.PDU.(type) {
 				case *t128.TsFpUpdateBitmap:
 					for _, v := range pp.Rectangles {
-						option := &bitmap.Option{Width: int(v.Width), Height: int(v.Height),
-							BitPerPixel: int(v.BitsPerPixel), Data: v.BitmapDataStream}
+						option := &bitmap.Option{
+							Top:         int(v.DestTop),  // for position
+							Left:        int(v.DestLeft), // for position
+							Width:       int(v.Width),
+							Height:      int(v.Height),
+							BitPerPixel: int(v.BitsPerPixel),
+							Data:        v.BitmapDataStream,
+						}
 						// Note:
 						// 1. 未压缩的位图数据被格式化为自底向上、从左到右的一系列像素。每个像素是字节的整数。每行包含四个字节的倍数（必要时最多包含三个字节的填充）
 						// 2. 非32bpp格式的压缩位图使用交织RLE压缩并封装在RLE压缩位图流结构中

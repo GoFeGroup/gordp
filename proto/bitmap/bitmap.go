@@ -2,18 +2,21 @@ package bitmap
 
 import (
 	"bytes"
-	"github.com/GoFeGroup/gordp/core"
 	"image"
 	"image/png"
+
+	"github.com/GoFeGroup/gordp/core"
 )
 
 import "C"
 
 type Option struct {
-	Width       int
-	Height      int
-	BitPerPixel int
-	Data        []byte
+	Top         int    `json:"top"`
+	Left        int    `json:"left"`
+	Width       int    `json:"width"`
+	Height      int    `json:"height"`
+	BitPerPixel int    `json:"-"`
+	Data        []byte `json:"-"`
 }
 
 type BitMap struct {
