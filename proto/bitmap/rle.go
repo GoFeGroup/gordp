@@ -2,10 +2,11 @@ package bitmap
 
 import (
 	"bytes"
-	"github.com/GoFeGroup/gordp/core"
 	"image"
 	"image/color"
 	"io"
+
+	"github.com/GoFeGroup/gordp/core"
 )
 
 const (
@@ -350,7 +351,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 func rgb565ToImage(w int, h int, bpp int, data []byte) image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 	r := bytes.NewReader(data)
-	for y := 0; y < h; y++ {
+	for y := 1; y <= h; y++ {
 		for x := 0; x < w; x++ {
 			pixel := readPixel(r, 16)
 			// RGB565

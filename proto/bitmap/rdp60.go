@@ -2,10 +2,11 @@ package bitmap
 
 import (
 	"bytes"
-	"github.com/GoFeGroup/gordp/core"
 	"image"
 	"image/color"
 	"io"
+
+	"github.com/GoFeGroup/gordp/core"
 )
 
 func decompressColorPlane(r io.Reader, w, h int) []byte {
@@ -117,7 +118,7 @@ func (m *BitMap) LoadRDP60(option *Option) *BitMap {
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 
 	pos := 0
-	for y := 0; y < h; y++ {
+	for y := 1; y <= h; y++ {
 		for x := 0; x < w; x++ {
 			img.Set(x, h-y, color.RGBA{R: cr[pos], G: cg[pos], B: cb[pos], A: 255})
 			pos++
