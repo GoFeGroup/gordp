@@ -3,12 +3,13 @@ package t128
 import (
 	"bytes"
 	"fmt"
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/glog"
 	"github.com/GoFeGroup/gordp/proto/fastpath"
 	"github.com/GoFeGroup/gordp/proto/mcs"
 	"github.com/GoFeGroup/gordp/proto/x224"
-	"io"
 )
 
 type PDU interface {
@@ -102,4 +103,9 @@ func ReadFastPathPDU(r io.Reader) PDU {
 	}
 	glog.Debugf("analyse FastPathPDU")
 	return (&TsFpUpdatePDU{}).Read(bytes.NewReader(fp.Data))
+}
+
+func WriteFastPathPDU(w io.Writer, pdu PDU) {
+	data := pdu.Serialize()
+	fastpath.Write(w, data)
 }

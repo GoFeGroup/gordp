@@ -1,9 +1,10 @@
 package fastpath
 
 import (
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/proto/mcs/per"
-	"io"
 )
 
 type Header struct {
@@ -21,6 +22,13 @@ func (h *Header) Read(r io.Reader) {
 	h.Length = core.If(h.Length < 0x80, h.Length-2, h.Length-3)
 }
 
+func (h *Header) Write(w io.Writer) {
+	b := uint8(h.EncryptionFlags<<6 | h.NumberEvents<<2)
+	core.WriteLE(w, b)
+	h.Length = core.If(h.Length < 0x80, h.Length+2, h.Length+3)
+	per.WriteLength(w, h.Length)
+}
+
 type FastPathData struct {
 	Header Header
 	Data   []byte
@@ -33,4 +41,9 @@ func Read(r io.Reader) *FastPathData {
 	fp.Data = core.ReadBytes(r, fp.Header.Length)
 	//glog.Debugf("fastpath read data: %v - %x", len(fp.Data), fp.Data)
 	return fp
+}
+
+func Write(w io.Writer, data []byte) {
+	(&Header{Length: len(data)}).Write(w)
+	core.WriteFull(w, data)
 }
