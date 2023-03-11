@@ -1,8 +1,10 @@
 package mcs
 
 import (
-	"github.com/GoFeGroup/gordp/core"
 	"io"
+
+	"github.com/GoFeGroup/gordp/core"
+	"github.com/GoFeGroup/gordp/glog"
 )
 
 // RSAPublicKey
@@ -28,7 +30,7 @@ type ProprietaryServerCertificate struct {
 	SignatureBlobType uint16 // This field is set to BB_RSA_SIGNATURE_BLOB (0x0008).
 	SignatureBlobLen  uint16 // The size in bytes of the SignatureBlob field.
 	SignatureBlob     []byte
-	Padding           [8]byte
+	Padding           []byte
 }
 
 func (p *ProprietaryServerCertificate) GetPublicKey() (uint32, []byte) {
@@ -38,23 +40,27 @@ func (p *ProprietaryServerCertificate) Verify() bool {
 	return true // TODO:
 }
 func (p *ProprietaryServerCertificate) Read(r io.Reader) {
-	core.ReadLE(r, &p.DwSigAlgId)
-	core.ReadLE(r, &p.DwKeyAlgId)
-	core.ReadLE(r, &p.PublicKeyBlobType)
-	core.ReadLE(r, &p.PublicKeyBlobLen)
+	core.ReadLE(r, &p.DwSigAlgId)        // 1
+	core.ReadLE(r, &p.DwKeyAlgId)        // 1
+	core.ReadLE(r, &p.PublicKeyBlobType) // 6
+	core.ReadLE(r, &p.PublicKeyBlobLen)  // 92
 
-	core.ReadLE(r, &p.PublicKeyBlob.Magic)
-	core.ReadLE(r, &p.PublicKeyBlob.KeyLen)
-	core.ReadLE(r, &p.PublicKeyBlob.BitLen)
-	core.ReadLE(r, &p.PublicKeyBlob.DataLen)
-	core.ReadLE(r, &p.PublicKeyBlob.PubExp)
-	p.PublicKeyBlob.Modulus = core.ReadBytes(r, int(p.PublicKeyBlob.KeyLen-8))
-	core.ReadLE(r, &p.PublicKeyBlob.Modulus)
-	core.ReadLE(r, &p.PublicKeyBlob.Padding)
+	core.ReadLE(r, &p.PublicKeyBlob.Magic)   // 826364754
+	core.ReadLE(r, &p.PublicKeyBlob.KeyLen)  // 72 (BitLen/8+8)
+	core.ReadLE(r, &p.PublicKeyBlob.BitLen)  // 512
+	core.ReadLE(r, &p.PublicKeyBlob.DataLen) // 63 (BitLen/8-1)
+	core.ReadLE(r, &p.PublicKeyBlob.PubExp)  // 65537
+	p.PublicKeyBlob.Modulus = core.ReadBytes(r, int(p.PublicKeyBlob.KeyLen))
+	//core.ReadLE(r, &p.PublicKeyBlob.Modulus)
+	//core.ReadLE(r, &p.PublicKeyBlob.Padding)
+	p.PublicKeyBlob.Padding = core.ReadBytes(r, int(8-p.PublicKeyBlob.KeyLen%8))
 
-	core.ReadLE(r, &p.SignatureBlobType)
-	core.ReadLE(r, &p.SignatureBlobLen)
-	p.SignatureBlob = core.ReadBytes(r, int(p.SignatureBlobLen-8))
-	core.ReadLE(r, &p.SignatureBlob)
-	core.ReadLE(r, &p.Padding)
+	core.ReadLE(r, &p.SignatureBlobType) // 0x0008
+	core.ReadLE(r, &p.SignatureBlobLen)  // 72
+	glog.Debugf("%+v", p)
+	p.SignatureBlob = core.ReadBytes(r, int(p.SignatureBlobLen))
+	p.Padding = core.ReadBytes(r, int(8-p.SignatureBlobLen%8))
+
+	//core.ReadLE(r, &p.SignatureBlob)
+	//core.ReadLE(r, &p.Padding)
 }

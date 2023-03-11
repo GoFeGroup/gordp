@@ -3,9 +3,10 @@ package connPdu
 import (
 	"bytes"
 	"fmt"
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/proto/x224"
-	"io"
 )
 
 // ServerConnectionConfirmPDU
@@ -19,5 +20,7 @@ func (pdu *ServerConnectionConfirmPDU) Read(r io.Reader) {
 	if typ != x224.TPDU_CONNECTION_CONFIRM {
 		core.ThrowError(fmt.Errorf("invalid response flag: %x, should be TYPE_RDP_NEG_RSP", typ))
 	}
-	pdu.ProtocolNeg.Read(bytes.NewReader(data))
+	if len(data) > 0 {
+		pdu.ProtocolNeg.Read(bytes.NewReader(data))
+	}
 }

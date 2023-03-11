@@ -1,8 +1,10 @@
 package mcs
 
 import (
-	"github.com/GoFeGroup/gordp/core"
 	"io"
+
+	"github.com/GoFeGroup/gordp/core"
+	"github.com/GoFeGroup/gordp/glog"
 )
 
 const (
@@ -25,6 +27,8 @@ type ServerCertificate struct {
 
 func (c *ServerCertificate) Read(r io.Reader) {
 	core.ReadLE(r, &c.DwVersion)
+
+	glog.Debugf("dwVersion: %v", c.DwVersion&0x7fffffff)
 	switch c.DwVersion & 0x7fffffff {
 	case CERT_CHAIN_VERSION_1:
 		c.CertData = &ProprietaryServerCertificate{}

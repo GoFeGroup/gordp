@@ -2,9 +2,10 @@ package mcs
 
 import (
 	"bytes"
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/glog"
-	"io"
 )
 
 // ServerSecurityData
@@ -23,6 +24,9 @@ func (d *ServerSecurityData) Read(r io.Reader) {
 
 	core.ReadLE(r, &d.EncryptionMethod)
 	core.ReadLE(r, &d.EncryptionLevel)
+
+	glog.Debugf("%v-%v", d.EncryptionMethod, d.EncryptionLevel)
+
 	if d.EncryptionMethod == 0 && d.EncryptionLevel == 0 {
 		return
 	}
@@ -33,10 +37,12 @@ func (d *ServerSecurityData) Read(r io.Reader) {
 	_, err := io.ReadFull(r, d.ServerRandom)
 	core.ThrowError(err)
 
+	glog.Debugf("%+v", d)
 	// read certdata
 	data := make([]byte, d.ServerCertLen)
 	_, err = io.ReadFull(r, data)
 	core.ThrowError(err)
+	glog.Debugf("serverCertLen: %v", d.ServerCertLen)
 
 	d.ServerCertificate.Read(bytes.NewReader(data))
 }
