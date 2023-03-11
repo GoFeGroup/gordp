@@ -39,6 +39,7 @@ func (p *ProprietaryServerCertificate) GetPublicKey() (uint32, []byte) {
 func (p *ProprietaryServerCertificate) Verify() bool {
 	return true // TODO:
 }
+
 func (p *ProprietaryServerCertificate) Read(r io.Reader) {
 	core.ReadLE(r, &p.DwSigAlgId)        // 1
 	core.ReadLE(r, &p.DwKeyAlgId)        // 1
@@ -53,13 +54,13 @@ func (p *ProprietaryServerCertificate) Read(r io.Reader) {
 	p.PublicKeyBlob.Modulus = core.ReadBytes(r, int(p.PublicKeyBlob.KeyLen))
 	//core.ReadLE(r, &p.PublicKeyBlob.Modulus)
 	//core.ReadLE(r, &p.PublicKeyBlob.Padding)
-	p.PublicKeyBlob.Padding = core.ReadBytes(r, int(8-p.PublicKeyBlob.KeyLen%8))
+	//p.PublicKeyBlob.Padding = core.ReadBytes(r, int(8-p.PublicKeyBlob.KeyLen%8))
 
 	core.ReadLE(r, &p.SignatureBlobType) // 0x0008
 	core.ReadLE(r, &p.SignatureBlobLen)  // 72
 	glog.Debugf("%+v", p)
 	p.SignatureBlob = core.ReadBytes(r, int(p.SignatureBlobLen))
-	p.Padding = core.ReadBytes(r, int(8-p.SignatureBlobLen%8))
+	//p.Padding = core.ReadBytes(r, int(8-p.SignatureBlobLen%8))
 
 	//core.ReadLE(r, &p.SignatureBlob)
 	//core.ReadLE(r, &p.Padding)

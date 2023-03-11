@@ -8,6 +8,24 @@ import (
 	"github.com/GoFeGroup/gordp/glog"
 )
 
+// encryptionMethod
+const (
+	ENCRYPTION_METHOD_NONE   = 0x00000000
+	ENCRYPTION_METHOD_40BIT  = 0x00000001
+	ENCRYPTION_METHOD_128BIT = 0x00000002
+	ENCRYPTION_METHOD_56BIT  = 0x00000008
+	ENCRYPTION_METHOD_FIPS   = 0x00000010
+)
+
+// encryptionLevel
+const (
+	ENCRYPTION_LEVEL_NONE              = 0x00000000
+	ENCRYPTION_LEVEL_LOW               = 0x00000001
+	ENCRYPTION_LEVEL_CLIENT_COMPATIBLE = 0x00000002
+	ENCRYPTION_LEVEL_HIGH              = 0x00000003
+	ENCRYPTION_LEVEL_FIPS              = 0x00000004
+)
+
 // ServerSecurityData
 // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/3e86b68d-3e2e-4433-b486-878875778f4b
 type ServerSecurityData struct {
@@ -20,11 +38,13 @@ type ServerSecurityData struct {
 }
 
 func (d *ServerSecurityData) Read(r io.Reader) {
-	defer func() { glog.Debugf("server security data: %0#x", d) }()
+	defer func() { glog.Debugf("server security data: %+v", d) }()
 
 	core.ReadLE(r, &d.EncryptionMethod)
 	core.ReadLE(r, &d.EncryptionLevel)
 
+	// Win10: 0-0
+	// WinXP: 2-2
 	glog.Debugf("%v-%v", d.EncryptionMethod, d.EncryptionLevel)
 
 	if d.EncryptionMethod == 0 && d.EncryptionLevel == 0 {
@@ -33,16 +53,7 @@ func (d *ServerSecurityData) Read(r io.Reader) {
 
 	core.ReadLE(r, &d.ServerRandomLen)
 	core.ReadLE(r, &d.ServerCertLen)
-	d.ServerRandom = make([]byte, d.ServerRandomLen)
-	_, err := io.ReadFull(r, d.ServerRandom)
-	core.ThrowError(err)
-
-	glog.Debugf("%+v", d)
-	// read certdata
-	data := make([]byte, d.ServerCertLen)
-	_, err = io.ReadFull(r, data)
-	core.ThrowError(err)
-	glog.Debugf("serverCertLen: %v", d.ServerCertLen)
-
-	d.ServerCertificate.Read(bytes.NewReader(data))
+	d.ServerRandom = core.ReadBytes(r, int(d.ServerRandomLen))
+	serverCertData := core.ReadBytes(r, int(d.ServerCertLen))
+	d.ServerCertificate.Read(bytes.NewReader(serverCertData))
 }

@@ -2,6 +2,9 @@ package core
 
 import (
 	"fmt"
+	"runtime/debug"
+
+	"github.com/GoFeGroup/gordp/glog"
 )
 
 func TryCatch(f func(), catch func(e any)) {
@@ -32,8 +35,8 @@ func Try(f func()) error {
 }
 
 func Throw(e any) {
-	//glog.Debugf("%v", e)
-	//glog.Debugf("%s", debug.Stack())
+	glog.Debugf("%v", e)
+	glog.Debugf("%s", debug.Stack())
 	panic(e)
 }
 
