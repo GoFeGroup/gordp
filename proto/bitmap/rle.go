@@ -203,8 +203,8 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			//pixels += runLength
 			//glog.Debugf("+++ runLength: %v, pixels: %v", runLength, pixels)
 
-			pixel := peekPixel(dest, w*getPixelSize(bpp), bpp) // 查找上一行像素
-			if insertFgPel {                                   // FILL & lastcode == FILL
+			pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
+			if insertFgPel {                                       // FILL & lastcode == FILL
 				writePixel(dest, pixel^fgPel, bpp)
 			} else { // FILL & lastcode != FILL
 				writePixel(dest, pixel, bpp)
@@ -212,7 +212,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			runLength--
 
 			for ; runLength > 0; runLength-- {
-				pixel := peekPixel(dest, w*getPixelSize(bpp), bpp) // 查找上一行像素
+				pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
 				writePixel(dest, pixel, bpp)
 			}
 
@@ -240,7 +240,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			//glog.Debugf("+++ runLength: %v, pixels: %v", runLength, pixels)
 
 			for ; runLength > 0; runLength-- {
-				pixel := peekPixel(dest, w*getPixelSize(bpp), bpp) // 查找上一行像素
+				pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
 				writePixel(dest, pixel^fgPel, bpp)
 			}
 
@@ -287,7 +287,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 					cBits = runLength
 				}
 				for ; cBits > 0; cBits-- {
-					pixel := peekPixel(dest, w*getPixelSize(bpp), bpp) // 查找上一行像素
+					pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
 					if bitmask&0x1 > 0 {
 						pixel ^= fgPel // FIXME
 					}
@@ -303,7 +303,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			cBits := 8
 			bitmask := g_MaskSpecialFgBg1
 			for ; cBits > 0; cBits-- {
-				pixel := peekPixel(dest, w, bpp) // 查找上一行像素
+				pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
 				if bitmask&0x1 > 0 {
 					pixel ^= fgPel // FIXME
 				}
@@ -319,7 +319,7 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			cBits := 8
 			bitmask := g_MaskSpecialFgBg2
 			for ; cBits > 0; cBits-- {
-				pixel := peekPixel(dest, w, bpp) // 查找上一行像素
+				pixel := peekPixel(dest, (w-1)*getPixelSize(bpp), bpp) // 查找上一行像素
 				if bitmask&0x1 > 0 {
 					pixel ^= fgPel // FIXME
 				}
