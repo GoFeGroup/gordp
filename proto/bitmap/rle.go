@@ -173,7 +173,7 @@ func writePixel(w io.Writer, pixel uint32, bpp int) {
 
 // 查找上一行相同位置的像素
 func peekPixel(r *bytes.Buffer, rowDelta int, bpp int) uint32 {
-	if r.Len() > rowDelta {
+	if r.Len() >= rowDelta {
 		pos := r.Len() - rowDelta
 		return readPixel(bytes.NewReader(r.Bytes()[pos:pos+getPixelSize(bpp)]), bpp)
 	}
