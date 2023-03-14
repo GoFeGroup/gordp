@@ -105,7 +105,7 @@ func ReadFastPathPDU(r io.Reader) PDU {
 	return (&TsFpUpdatePDU{}).Read(bytes.NewReader(fp.Data))
 }
 
-func WriteFastPathPDU(w io.Writer, pdu PDU) {
+func WriteFastPathInputPDU(w io.Writer, pdu *TsFpInputPdu) {
 	data := pdu.Serialize()
 	fastpath.Write(w, data)
 }

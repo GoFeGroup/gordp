@@ -22,3 +22,20 @@ func (c *Client) readPdu() t128.PDU {
 	}
 	return nil
 }
+
+func (c *Client) sendMouseEvent(pointerFlags uint16, xPos, yPos uint16) {
+	pdu := t128.NewFastPathMouseInputPDU(pointerFlags, xPos, yPos)
+	t128.WriteFastPathInputPDU(c.stream, pdu)
+}
+
+func (c *Client) SendMouseMoveEvent(xPos, yPos uint16) {
+	c.sendMouseEvent(t128.PTRFLAGS_MOVE, xPos, yPos)
+}
+
+func (c *Client) SendMouseLeftDownEvent(xPos, yPos uint16) {
+	c.sendMouseEvent(t128.PTRFLAGS_DOWN|t128.PTRFLAGS_BUTTON1, xPos, yPos)
+}
+
+func (c *Client) SendMouseLeftUpEvent(xPos, yPos uint16) {
+	c.sendMouseEvent(t128.PTRFLAGS_BUTTON1, xPos, yPos)
+}

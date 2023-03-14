@@ -2,6 +2,7 @@ package t128
 
 import (
 	"bytes"
+	"io"
 
 	"github.com/GoFeGroup/gordp/proto/mcs/per"
 )
@@ -15,6 +16,17 @@ type TsFpInputPdu struct {
 	DataSignature   [8]byte          // Optional: existed if (Header.Flag & FASTPATH_INPUT_SECURE_CHECKSUM)
 	NumEvents       uint8            // Optional: if (header.NumEvent != 0)
 	FpInputEvents   []TsFpInputEvent // An array of Fast-Path Input Event (section 2.2.8.1.2.2)
+}
+
+func (pdu *TsFpInputPdu) iDataPDU() {}
+
+func (pdu *TsFpInputPdu) Read(r io.Reader) DataPDU {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (pdu *TsFpInputPdu) Type2() uint8 {
+	return PDUTYPE2_INPUT
 }
 
 func (pdu *TsFpInputPdu) Serialize() []byte {
