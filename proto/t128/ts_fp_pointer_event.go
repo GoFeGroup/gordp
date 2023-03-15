@@ -35,7 +35,7 @@ func (e *TsFpPointerEvent) iInputEvent() {}
 
 func (e *TsFpPointerEvent) Serialize() []byte {
 	buff := new(bytes.Buffer)
-	core.WriteLE(buff, uint8(FASTPATH_INPUT_EVENT_MOUSE)) // eventHeader, eventFlags=0, eventCode=FASTPATH_INPUT_EVENT_MOUSE
+	core.WriteLE(buff, uint8(FASTPATH_INPUT_EVENT_MOUSE<<5)) // eventHeader, eventFlags=0, eventCode=FASTPATH_INPUT_EVENT_MOUSE
 	core.WriteLE(buff, e)
 	return buff.Bytes()
 }

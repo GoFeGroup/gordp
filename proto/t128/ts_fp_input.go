@@ -3,7 +3,7 @@ package t128
 import (
 	"bytes"
 
-	"github.com/GoFeGroup/gordp/proto/mcs/per"
+	"github.com/GoFeGroup/gordp/core"
 )
 
 // TsFpInputPdu
@@ -42,7 +42,8 @@ func (pdu *TsFpInputPdu) Serialize() []byte {
 	buff := new(bytes.Buffer)
 	pdu.Header.Write(buff)
 
-	per.WriteLength(buff, int(pdu.Length))
+	core.WriteBE(buff, pdu.Length|0x8000) // copy from FreeRDP
+	//per.WriteLength(buff, int(pdu.Length))
 	buff.Write(eventsData)
 
 	return buff.Bytes()
