@@ -79,7 +79,7 @@ func (pdu *TsFpInputPdu) Serialize() []byte {
 	buff := new(bytes.Buffer)
 	pdu.Header.Write(buff)
 
-	core.WriteBE(buff, pdu.Length|0x8000) // copy from FreeRDP
+	core.WriteBE(buff, (pdu.Length+3)|0x8000) // copy from FreeRDP
 	//per.WriteLength(buff, int(pdu.Length))
 	buff.Write(eventsData)
 

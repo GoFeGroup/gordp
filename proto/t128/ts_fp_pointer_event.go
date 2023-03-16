@@ -40,6 +40,6 @@ func (e *TsFpPointerEvent) Serialize() []byte {
 	core.WriteLE(buff, uint8(FASTPATH_INPUT_EVENT_MOUSE<<5)) // eventHeader: eventFlags=0, eventCode=FASTPATH_INPUT_EVENT_MOUSE
 	core.WriteLE(buff, e)
 
-	glog.Debugf("mouse event: %v - %d", buff.Len(), buff.Bytes())
+	glog.Debugf("mouse event: %v - %x", buff.Len(), buff.Bytes())
 	return buff.Bytes()
 }
