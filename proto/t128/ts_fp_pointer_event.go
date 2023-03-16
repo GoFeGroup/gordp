@@ -3,6 +3,8 @@ package t128
 import (
 	"bytes"
 
+	"github.com/GoFeGroup/gordp/glog"
+
 	"github.com/GoFeGroup/gordp/core"
 )
 
@@ -37,5 +39,7 @@ func (e *TsFpPointerEvent) Serialize() []byte {
 	buff := new(bytes.Buffer)
 	core.WriteLE(buff, uint8(FASTPATH_INPUT_EVENT_MOUSE<<5)) // eventHeader: eventFlags=0, eventCode=FASTPATH_INPUT_EVENT_MOUSE
 	core.WriteLE(buff, e)
+
+	glog.Debugf("mouse event: %v - %d", buff.Len(), buff.Bytes())
 	return buff.Bytes()
 }
