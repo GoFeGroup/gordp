@@ -1,6 +1,7 @@
 package connPdu
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/GoFeGroup/gordp/core"
@@ -34,4 +35,6 @@ type Negotiation struct {
 
 func (nego *Negotiation) Read(r io.Reader) {
 	core.ReadLE(r, nego)
+	core.ThrowIf(nego.Type != TYPE_RDP_NEG_RSP, fmt.Errorf("invalid nego type: %v", nego.Type))
+	core.ThrowIf(nego.Length != 8, fmt.Errorf("invalid nego.length: %v", nego.Length))
 }

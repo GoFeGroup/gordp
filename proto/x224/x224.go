@@ -3,10 +3,11 @@ package x224
 import (
 	"bytes"
 	"fmt"
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/glog"
 	"github.com/GoFeGroup/gordp/proto/tpkt"
-	"io"
 )
 
 const (

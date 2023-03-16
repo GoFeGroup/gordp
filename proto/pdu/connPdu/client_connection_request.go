@@ -2,9 +2,10 @@ package connPdu
 
 import (
 	"bytes"
+	"io"
+
 	"github.com/GoFeGroup/gordp/core"
 	"github.com/GoFeGroup/gordp/proto/x224"
-	"io"
 )
 
 // ClientConnectionRequestPDU
