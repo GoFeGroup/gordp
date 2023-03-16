@@ -25,7 +25,7 @@ func (c *Client) readPdu() t128.PDU {
 
 func (c *Client) sendMouseEvent(pointerFlags uint16, xPos, yPos uint16) {
 	pdu := t128.NewFastPathMouseInputPDU(pointerFlags, xPos, yPos)
-	t128.WriteFastPathInputPDU(c.stream, pdu)
+	core.WriteFull(c.stream, pdu.Serialize())
 }
 
 func (c *Client) SendMouseMoveEvent(xPos, yPos uint16) {

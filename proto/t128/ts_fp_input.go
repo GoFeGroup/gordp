@@ -28,6 +28,43 @@ type TsFpInputPdu struct {
 //	return PDUTYPE2_INPUT
 //}
 
+// SlowPath Input PDU
+// input_send_mouse_event
+//  - rdp_client_input_pdu_init
+//    - rdp_data_pdu_init
+//      - rdp_send_stream_pdu_init
+//        - rdp_send_stream_init
+//          - RDP_PACKET_HEADER_MAX_LENGTH
+//            = TPDU_DATA_LENGTH + MCS_SEND_DATA_HEADER_MAX_LENGTH
+//            = (TPKT_HEADER_LENGTH + TPDU_DATA_HEADER_LENGTH) + 8
+//            = (4 + 3) + 8
+//          - security == can be 0
+//        - RDP_SHARE_CONTROL_HEADER_LENGTH = 6
+//     - RDP_SHARE_DATA_HEADER_LENGTH = 12
+//    - rdp_write_client_input_pdu_header   // TS_INPUT_PDU_DATA <- SlowPath
+//      - numberEvents = 2
+//      - pad2Octets = 2
+//    - rdp_write_input_event_header
+//      - eventTime = 4
+//      - messageType = 2
+//  - input_write_mouse_event
+//    - flags = 2
+//    - xPos = 2
+//    - yPos = 2
+
+// FastPath Input PDU
+// input_send_fastpath_mouse_event
+//  - fastpath_input_pdu_init
+//    - fastpath_input_pdu_init_header
+//      - transport_send_stream_init = 0
+//      - fpInputHeader, length1 and length2 = 3
+//      - fastpath_get_sec_bytes = 0
+//    - eventHeader = (eventFlags | (eventCode << 5)) = 1
+//  - input_write_mouse_event
+//    - flags = 2
+//    - xPos = 2
+//    - yPos = 2
+
 func (pdu *TsFpInputPdu) Serialize() []byte {
 	var events [][]byte
 	for _, v := range pdu.FpInputEvents {
