@@ -342,7 +342,8 @@ func rleDecompress(w, h, bpp int, data []byte) image.Image {
 			writePixel(dest, blackPixel, bpp)
 
 		default:
-			core.Throwf("invalid code: %x, codeHeader: %x, runLength: %x", code, codeHeader, runLength)
+			core.Throwf("invalid code: %x, codeHeader: %x, runLength: %x, data: %x",
+				code, codeHeader, runLength, data)
 		}
 	}
 	return rgb565ToImage(w, h, bpp, dest.Bytes())
